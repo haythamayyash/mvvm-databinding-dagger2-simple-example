@@ -4,10 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-import com.example.haithamayyash.simpleapp.construction.AppRoot;
-
-public class BaseViewModel extends ViewModel {
-    private AppRoot appRoot;
+public abstract class BaseViewModel extends ViewModel {
     protected MutableLiveData<Boolean> networkErrorLiveData;
 
     public LiveData<Boolean> getNetworkErrorLiveData() {
@@ -16,9 +13,4 @@ public class BaseViewModel extends ViewModel {
         return networkErrorLiveData;
     }
 
-    protected AppRoot getAppRoot() {
-        if (appRoot == null)
-            appRoot = new AppRoot();
-        return appRoot;
-    }
 }

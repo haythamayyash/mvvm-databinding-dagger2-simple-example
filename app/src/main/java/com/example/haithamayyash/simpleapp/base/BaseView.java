@@ -1,23 +1,29 @@
 package com.example.haithamayyash.simpleapp.base;
 
-import android.content.Context;
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.example.haithamayyash.simpleapp.construction.PresentationRoot;
+import com.example.haithamayyash.simpleapp.App;
+import com.example.haithamayyash.simpleapp.di.PresentationComponent;
+import com.example.haithamayyash.simpleapp.di.PresentationModule;
+
+import java.util.Objects;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 
 public abstract class BaseView<B extends ViewDataBinding> extends FrameLayout {
-    private final Context context;
+    protected final Activity context;
     protected B binding;
-    private PresentationRoot presentationRoot;
+    protected BaseFragment fragment;
 
-    public BaseView(Context context, int layoutRes) {
-        super(context);
-        this.context = context;
+    public BaseView(BaseFragment fragment, int layoutRes) {
+        super(Objects.requireNonNull(fragment.getContext()));
+        this.fragment = fragment;
+        context = fragment.getActivity();
+        initDI();
         binding = DataBindingUtil.inflate(LayoutInflater.from(context), layoutRes, null
                 , false);
         initView();
@@ -27,10 +33,10 @@ public abstract class BaseView<B extends ViewDataBinding> extends FrameLayout {
 
     protected abstract void initView();
 
-    protected PresentationRoot getPresentationRoot(BaseFragment fragment) {
-        if (presentationRoot == null)
-            presentationRoot = new PresentationRoot(fragment);
-        return presentationRoot;
-
+    protected PresentationComponent getPresentationComponent(BaseView view) {
+        App app = (App) context.getApplication();
+        return app.getAppComponent().newPresentationComponent(new PresentationModule(view));
     }
+
+    protected abstract void initDI();
 }

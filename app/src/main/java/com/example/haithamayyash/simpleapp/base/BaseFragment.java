@@ -8,22 +8,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.haithamayyash.simpleapp.construction.PresentationRoot;
-import com.example.haithamayyash.simpleapp.questions_list.QuestionListFragment;
+import com.example.haithamayyash.simpleapp.App;
+import com.example.haithamayyash.simpleapp.di.PresentationComponent;
+import com.example.haithamayyash.simpleapp.di.PresentationModule;
+
+import java.util.Objects;
 
 public abstract class BaseFragment extends Fragment {
-    protected PresentationRoot questionListRoot;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        initDI();
         return bindView();
     }
 
     public abstract View bindView();
 
-    protected PresentationRoot getQuestionListRoot(QuestionListFragment fragment){
-        if(questionListRoot == null)
-            questionListRoot = new PresentationRoot(fragment);
-        return questionListRoot;
+    protected PresentationComponent getPresentationComponent(BaseFragment fragment) {
+        return ((App) Objects.requireNonNull(getActivity()).getApplication()).getAppComponent()
+                .newPresentationComponent(new PresentationModule(fragment));
     }
+
+    protected abstract void initDI();
 }
